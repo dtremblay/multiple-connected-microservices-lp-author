@@ -76,12 +76,16 @@ async fn handle_request(req: Request<Body>) -> Result<Response<Body>, anyhow::Er
 
             match response {
                 Ok(good) => {
-                    let rate = good.text().await?.parse::<f32>().unwrap();
-                    order.total = order.subtotal * (1.0f32 + rate);
-                    Ok(response_build(&serde_json::to_string_pretty(&order)?))
+                    if good.status() == StatusCode::OK {
+                        let rate = good.text().await?.parse::<f32>().unwrap();
+                        order.total = order.subtotal * (1.0f32 + rate);
+                        Ok(response_build(&serde_json::to_string_pretty(&order)?))
+                    } else {
+                        Ok(response_build("{\"status\":\"error\", \"message\":\"The zip code in the order does not have a corresponding sales tax rate.\"}"))
+                    }
                 }
                 Err(_) => {
-                    Ok(response_build("{\"status\":\"error\", \"message\":\"The zip code in the order does not have a corresponding sales tax rate.\"}"))
+                    Ok(response_build("{\"status\":\"error\", \"message\":\"A server error occured when calling the sales tax service.\"}"))
                 }
             }
         }
