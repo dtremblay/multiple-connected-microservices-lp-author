@@ -1,0 +1,17 @@
+GET http://localhost:8001/
+
+###
+POST http://localhost:8001/find_rate
+
+78701
+
+###
+POST http://localhost:8001/find_rate
+
+2585SP
+
+
+###
+POST http://localhost:8001/find_rate
+
+blah
