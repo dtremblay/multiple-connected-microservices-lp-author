@@ -22,13 +22,21 @@
       total : 0.0,
     };
 
-    fetch("http://localhost:8002/compute", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-type": "application/json" },
-    })
-    .then(response => response.json())
-    .then(json => updateOrderForm(json));
+      fetch("http://localhost:8002/compute", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-type": "application/json" },
+      })
+      .then(response => response.json())
+      .then(json => {
+        if (json.status === "error") {
+          window.alert("Error occurred:" + json.message);
+        } else {
+          updateOrderForm(json);
+        }
+      });
+      //.catch(error => window.alert("Could not connect to server!"));
+
   }
 
   function updateOrderForm(json) {
